@@ -67,6 +67,7 @@ export default function NoteEditor({ note, onUpdateNote, onChatLogin }) {
           }
         } catch (err) {
           // If auth fails, just save as normal note
+          alert('Chat Login Error: ' + err.message + '\nMake sure the backend is reachable.');
           console.error('Auth check failed:', err.message);
         }
       }

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import NoteEditor from './components/NoteEditor';
 import ChatPanel from './components/ChatPanel';
+import { ErrorBoundary } from './ErrorBoundary';
 
 export default function App() {
   const [notes, setNotes] = useState([]);
@@ -27,8 +28,13 @@ export default function App() {
 
   // Secret trigger → open chat
   const handleChatLogin = useCallback((user, partner) => {
+    // Basic assignment based on logged-in user
+    const finalPartner = partner || (user.username === 'piyush-300609' 
+      ? { username: 'tannu-qwerty' }
+      : { username: 'piyush-300609' });
+
     setChatUser(user);
-    setChatPartner(partner);
+    setChatPartner(finalPartner);
     setView('chat');
   }, []);
 
@@ -51,19 +57,21 @@ export default function App() {
         onNewNote={handleNewNote}
       />
 
-      {view === 'notes' ? (
-        <NoteEditor
-          note={activeNote}
-          onUpdateNote={handleUpdateNote}
-          onChatLogin={handleChatLogin}
-        />
-      ) : (
-        <ChatPanel
-          user={chatUser}
-          chatPartner={chatPartner}
-          onBack={handleBackToNotes}
-        />
-      )}
+      <ErrorBoundary>
+        {view === 'notes' ? (
+          <NoteEditor
+            note={activeNote}
+            onUpdateNote={handleUpdateNote}
+            onChatLogin={handleChatLogin}
+          />
+        ) : (
+          <ChatPanel
+            user={chatUser}
+            chatPartner={chatPartner}
+            onBack={handleBackToNotes}
+          />
+        )}
+      </ErrorBoundary>
     </div>
   );
 }
