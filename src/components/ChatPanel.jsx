@@ -33,6 +33,7 @@ export default function ChatPanel({ user, chatPartner, onBack }) {
   const typingTimeoutRef = useRef(null);
 
   const {
+    socket,
     isConnected,
     partnerOnline,
     partnerTyping,
