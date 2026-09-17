@@ -15,7 +15,7 @@ const api = axios.create({
 export const fetchNotes = async (subject) => {
   const params = subject ? { subject } : {};
   const res = await api.get('/notes', { params });
-  return res.data;
+  return Array.isArray(res.data) ? res.data : [];
 };
 
 export const fetchNote = async (id) => {
