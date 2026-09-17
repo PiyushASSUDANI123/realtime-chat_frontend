@@ -197,29 +197,40 @@ export default function ChatPanel({ user, chatPartner, onBack }) {
 
   const handleSend = async () => {
     const text = inputText.trim();
-    if (!text && !mediaPreview) return;
+    const currentCaption = captionText.trim();
+    const currentMedia = mediaPreview;
+    const currentEditingMessage = editingMessage;
+
+    if (!text && !currentMedia) return;
+
+    // Clear input immediately to prevent double sends
+    setInputText('');
+    setCaptionText('');
+    setMediaPreview(null);
 
     let mediaUrl = null;
     let mediaType = null;
 
-    if (mediaPreview) {
+    if (currentMedia) {
       try {
         setUploading(true);
-        const uploadResult = await uploadMedia(mediaPreview.file);
+        const uploadResult = await uploadMedia(currentMedia.file);
         mediaUrl = uploadResult.mediaUrl;
         mediaType = uploadResult.mediaType;
       } catch (err) {
         console.error('Upload failed:', err.message);
         setUploading(false);
+        // Put the media back if it failed
+        setMediaPreview(currentMedia);
         return;
       } finally {
         setUploading(false);
       }
     }
 
-    if (editingMessage) {
+    if (currentEditingMessage) {
       if (socket) {
-        socket.emit('edit_message', { messageId: editingMessage.id, newText: text, userId: user.id });
+        socket.emit('edit_message', { messageId: currentEditingMessage.id, newText: text, userId: user.id });
       }
       setEditingMessage(null);
     } else {
@@ -229,13 +240,10 @@ export default function ChatPanel({ user, chatPartner, onBack }) {
         messageText: text || null,
         mediaUrl,
         mediaType,
-        caption: captionText || null,
+        caption: currentCaption || null,
       });
     }
 
-    setInputText('');
-    setCaptionText('');
-    setMediaPreview(null);
     emitTyping(false);
   };
 
