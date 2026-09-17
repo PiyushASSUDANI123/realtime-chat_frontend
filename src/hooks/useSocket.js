@@ -11,7 +11,7 @@ export function useSocket(user) {
   useEffect(() => {
     if (!user) return;
 
-    const API_URL = import.meta.env.VITE_API_URL || 'https://chat.piyushassudani.in';
+    const API_URL = import.meta.env.VITE_API_URL || 'https://chat.tiflo.in';
 
     // Connect to Socket.io (using live backend url)
     const socket = io(API_URL, {
