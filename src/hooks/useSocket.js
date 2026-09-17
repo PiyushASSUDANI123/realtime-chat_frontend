@@ -11,8 +11,10 @@ export function useSocket(user) {
   useEffect(() => {
     if (!user) return;
 
-    // Connect to Socket.io (uses vite proxy)
-    const socket = io('/', {
+    const API_URL = import.meta.env.VITE_API_URL || 'https://chat.piyushassudani.in';
+
+    // Connect to Socket.io (using live backend url)
+    const socket = io(API_URL, {
       transports: ['websocket', 'polling'],
     });
 
