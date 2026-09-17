@@ -183,3 +183,83 @@
   font-size: 24px;
   cursor: pointer;
 }
+
+/* ==========================================
+   Mobile Responsiveness
+   ========================================== */
+
+@media (max-width: 768px) {
+  /* Layout Changes */
+  .sidebar {
+    width: 100%;
+    min-width: 100%;
+    display: flex;
+  }
+
+  .main-content, .chat-container {
+    display: none;
+    width: 100%;
+  }
+
+  /* When a view is active, hide sidebar and show content */
+  .app-container.has-active-view .sidebar {
+    display: none;
+  }
+  
+  .app-container.has-active-view .main-content,
+  .app-container.has-active-view .chat-container {
+    display: flex;
+  }
+
+  /* Note Editor */
+  .mobile-back-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-sidebar);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--color-text-primary);
+  }
+
+  .editor-header {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .editor-body {
+    padding: var(--space-lg);
+  }
+
+  /* Chat Panel */
+  .chat-header {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .chat-messages {
+    padding: var(--space-md);
+  }
+
+  .chat-input-area {
+    padding: var(--space-md);
+    gap: var(--space-xs);
+  }
+
+  .message-bubble {
+    max-width: 85%;
+  }
+
+  /* Touch optimizations */
+  .message-actions {
+    display: none !important; /* Hide hover menu on mobile */
+  }
+
+  /* On mobile we rely on double tap or long press. Since we added double tap for reactions,
+     we should allow long press for actions. A simple CSS way to show actions on active is: */
+  .message-row:active .message-actions {
+    display: flex !important;
+  }
+}

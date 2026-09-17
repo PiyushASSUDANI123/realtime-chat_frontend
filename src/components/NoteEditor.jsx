@@ -111,6 +111,14 @@ export default function NoteEditor({ note, onUpdateNote, onChatLogin }) {
     <div className="main-content">
       <div className="editor-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button 
+            className="mobile-back-btn" 
+            onClick={() => onUpdateNote && onUpdateNote(null)} 
+            style={{ display: 'none' }}
+          >
+            <FiChevronDown style={{ transform: 'rotate(90deg)' }} />
+          </button>
+          
           <span className={`editor-subject-badge ${subject}`}>
             <span className={`subject-dot ${subject}`} />
             {SUBJECT_OPTIONS.find((s) => s.key === subject)?.label}

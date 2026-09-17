@@ -39,8 +39,10 @@ export default function App() {
     setChatPartner(null);
   }, []);
 
+  const hasActiveView = activeNote || view === 'chat';
+
   return (
-    <div className="app-container">
+    <div className={`app-container ${hasActiveView ? 'has-active-view' : ''}`}>
       <Sidebar
         notes={notes}
         setNotes={setNotes}

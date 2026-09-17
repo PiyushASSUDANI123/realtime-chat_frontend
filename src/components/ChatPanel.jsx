@@ -41,6 +41,34 @@ export default function ChatPanel({ user, chatPartner, onBack }) {
     emitTyping,
   } = useSocket(user);
 
+  // Auto-logout after 5 minutes of inactivity
+  useEffect(() => {
+    let timeoutId;
+    const resetTimer = () => {
+      clearTimeout(timeoutId);
+      // 5 minutes = 300000 ms
+      timeoutId = setTimeout(() => {
+        onBack();
+      }, 300000);
+    };
+
+    resetTimer(); // start initially
+    
+    // Listen to user activity
+    window.addEventListener('mousemove', resetTimer);
+    window.addEventListener('keydown', resetTimer);
+    window.addEventListener('touchstart', resetTimer);
+    window.addEventListener('click', resetTimer);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('mousemove', resetTimer);
+      window.removeEventListener('keydown', resetTimer);
+      window.removeEventListener('touchstart', resetTimer);
+      window.removeEventListener('click', resetTimer);
+    };
+  }, [onBack]);
+
   // Load initial messages
   useEffect(() => {
     if (user) {
