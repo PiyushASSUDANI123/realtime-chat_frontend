@@ -666,6 +666,7 @@ body {
 
 .message-row {
   display: flex;
+  position: relative;
   animation: messageSlideIn var(--transition-spring) ease;
 }
 

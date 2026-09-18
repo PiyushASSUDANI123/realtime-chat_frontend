@@ -395,7 +395,7 @@ export default function ChatPanel({ user, chatPartner, onBack }) {
       {lightboxImg && (
         <div className="lightbox-overlay" onClick={() => setLightboxImg(null)}>
           <button className="lightbox-close" onClick={() => setLightboxImg(null)}><FiX /></button>
-          <img src={lightboxImg} className="lightbox-img" alt="Fullscreen preview" />
+          <img src={lightboxImg.startsWith('/') ? `${import.meta.env.VITE_API_URL || 'https://chat.piyushassudani.in'}${lightboxImg}` : lightboxImg} className="lightbox-img" alt="Fullscreen preview" onClick={(e) => e.stopPropagation()} />
         </div>
       )}
 
