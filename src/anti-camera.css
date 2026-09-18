@@ -1,0 +1,58 @@
+/* 
+  Anti-Camera & Privacy Styles 
+*/
+
+/* Prevents text selection across the chat */
+.chat-container {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* 
+  Moiré Pattern Overlay
+  This creates a high-frequency grid that is barely noticeable to the human eye on modern high-PPI screens,
+  but severely interferes with digital camera sensors, causing a Moiré effect (color banding/distortion)
+  when someone tries to photograph the screen with another phone.
+*/
+.anti-camera-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Allows clicking through the overlay */
+  z-index: 9999;
+  opacity: 0.12; /* Low opacity so it doesn't disturb normal viewing */
+  
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 0, 0, 1) 1px,
+      rgba(0, 0, 0, 1) 2px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 1px,
+      rgba(255, 255, 255, 1) 1px,
+      rgba(255, 255, 255, 1) 2px
+    );
+  
+  /* Blends the grid with the text underneath */
+  mix-blend-mode: difference;
+}
+
+/* Add a subtle pulsing animation to make video recording difficult too */
+@keyframes moire-pulse {
+  0% { transform: scale(1); opacity: 0.12; }
+  50% { transform: scale(1.01); opacity: 0.18; }
+  100% { transform: scale(1); opacity: 0.12; }
+}
+
+.anti-camera-overlay {
+  animation: moire-pulse 3s infinite alternate ease-in-out;
+}

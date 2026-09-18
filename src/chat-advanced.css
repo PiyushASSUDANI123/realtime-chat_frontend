@@ -263,3 +263,23 @@
     display: flex !important;
   }
 }
+
+.chat-exit-btn {
+  background: var(--color-danger);
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: auto;
+  box-shadow: 0 2px 5px rgba(255, 59, 48, 0.3);
+}
+
+.chat-exit-btn:hover {
+  background: #d32f2f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(255, 59, 48, 0.4);
+}

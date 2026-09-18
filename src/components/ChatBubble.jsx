@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiCheck, FiCopy, FiEdit2, FiTrash2, FiPlay, FiFileText } from 'react-icons/fi';
+import { FiCheck, FiCopy, FiEdit2, FiTrash2, FiPlay, FiFileText, FiDownload } from 'react-icons/fi';
 import MediaPreview from './MediaPreview';
 
 export default function ChatBubble({ message, currentUserId, onReact, onEdit, onDelete, onImageClick }) {
@@ -16,6 +16,28 @@ export default function ChatBubble({ message, currentUserId, onReact, onEdit, on
     e.preventDefault();
     if (!isSent) {
       onReact(message.id, '❤️');
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!message.media_url) return;
+    const url = message.media_url.startsWith('/') 
+      ? `${import.meta.env.VITE_API_URL || 'https://chat.piyushassudani.in'}${message.media_url}` 
+      : message.media_url;
+      
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = message.media_url.split('/').pop() || 'media';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      window.open(url, '_blank');
     }
   };
 
@@ -57,6 +79,7 @@ export default function ChatBubble({ message, currentUserId, onReact, onEdit, on
   return (
     <div className={`message-row ${direction}`} onDoubleClick={handleDoubleTap}>
       <div className="message-actions">
+        {message.media_url && <button className="action-btn" onClick={handleDownload} title="Download"><FiDownload /></button>}
         <button className="action-btn" onClick={handleCopy} title="Copy"><FiCopy /></button>
         {isSent && <button className="action-btn" onClick={() => onEdit(message)} title="Edit"><FiEdit2 /></button>}
         {isSent && <button className="action-btn delete" onClick={() => onDelete(message.id)} title="Unsend"><FiTrash2 /></button>}

@@ -3,6 +3,7 @@ import { FiArrowLeft, FiPaperclip, FiSend, FiX, FiMic, FiSquare } from 'react-ic
 import { useSocket } from '../hooks/useSocket';
 import { fetchMessages, uploadMedia } from '../services/api';
 import ChatBubble from './ChatBubble';
+import '../anti-camera.css';
 
 export default function ChatPanel({ user, chatPartner, onBack }) {
   const [messages, setMessages] = useState([]);
@@ -55,11 +56,39 @@ export default function ChatPanel({ user, chatPartner, onBack }) {
 
     resetTimer(); // start initially
     
-    // Listen to user activity
+    // Listen to user activity for auto-logout
     window.addEventListener('mousemove', resetTimer);
     window.addEventListener('keydown', resetTimer);
     window.addEventListener('touchstart', resetTimer);
     window.addEventListener('click', resetTimer);
+
+    // SECURITY: Auto-hide on minimize/blur
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        onBack();
+      }
+    };
+
+    const handleWindowBlur = () => {
+      onBack();
+    };
+
+    // SECURITY: Block common screenshot shortcuts
+    const handleGlobalKeyDown = (e) => {
+      // PrintScreen
+      if (e.key === 'PrintScreen' || e.keyCode === 44) {
+        onBack();
+      }
+      // Mac Screenshot (Cmd+Shift+3/4/5)
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5')) {
+        onBack();
+      }
+      resetTimer();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleWindowBlur);
+    window.addEventListener('keydown', handleGlobalKeyDown);
 
     return () => {
       clearTimeout(timeoutId);
@@ -67,6 +96,9 @@ export default function ChatPanel({ user, chatPartner, onBack }) {
       window.removeEventListener('keydown', resetTimer);
       window.removeEventListener('touchstart', resetTimer);
       window.removeEventListener('click', resetTimer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      window.removeEventListener('keydown', handleGlobalKeyDown);
     };
   }, [onBack]);
 
@@ -391,6 +423,9 @@ export default function ChatPanel({ user, chatPartner, onBack }) {
 
   return (
     <div className="chat-container">
+      {/* Anti-camera Moiré overlay */}
+      <div className="anti-camera-overlay"></div>
+
       {/* Lightbox */}
       {lightboxImg && (
         <div className="lightbox-overlay" onClick={() => setLightboxImg(null)}>
@@ -402,14 +437,18 @@ export default function ChatPanel({ user, chatPartner, onBack }) {
       {/* Header */}
       <div className="chat-header">
         <button className="chat-back-btn" onClick={onBack} title="Back to Notes"><FiArrowLeft /></button>
-        <div className="chat-user-avatar">{(chatPartner?.username || '?')[0].toUpperCase()}</div>
-        <div className="chat-user-info">
-          <div className="chat-user-name">{chatPartner?.username || 'Chat'}</div>
-          <div className={`chat-user-status ${partnerOnline ? 'online' : 'offline'}`}>
-            <span className={`status-dot ${partnerOnline ? 'online' : ''}`} />
-            {partnerOnline ? 'Online' : 'Offline'}
+        <div className="chat-header-info">
+          <div className="chat-header-avatar">{(chatPartner?.username || '?')[0].toUpperCase()}</div>
+          <div className="chat-header-text">
+            <h3>{chatPartner?.username || 'Chat'}</h3>
+            <span className={`status-dot ${partnerOnline ? 'online' : 'offline'}`}>
+              {partnerTyping ? 'Typing...' : (partnerOnline ? 'Online' : 'Offline')}
+            </span>
           </div>
         </div>
+        <button className="chat-exit-btn" onClick={onBack} title="Exit Secure Chat">
+          Exit
+        </button>
       </div>
 
       {/* Messages */}
